@@ -1,3 +1,5 @@
 /.idea/
 /data/
 /log/
+/etl_film_analytics/tests/test_data/generated/
+/dev/
