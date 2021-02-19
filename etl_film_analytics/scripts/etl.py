@@ -1,14 +1,17 @@
+import os
 import psycopg2
-import pandas as pd
 
 from etl_film_analytics.src.constants import (
     DB_HOST,
     DB_NAME,
     DB_USER,
-    DB_PASSWORD
+    DB_PASSWORD,
+    DIR_DATA
 )
 from etl_film_analytics.src import sql_queries
-from etl_film_analytics.src import utils_tables
+from etl_film_analytics.src import utils_tables, processing_csv
+
+PATH_METADATA = os.path.join(DIR_DATA, "movies_metadata.csv")
 
 
 def main():
@@ -19,31 +22,14 @@ def main():
     )
     cur = conn.cursor()
 
-    print("Extracting data from disk..")
-    df = pd.DataFrame([[
-        "Toy Story",
-        30000000,
-        1995 - 10 - 30,
-        373554033,
-        7.7,
-        "Pixar Animated Studio, Apple",
-        10.1,
-        "https://wikipedia/Toy_Story",
-        "In a world where toys are living things but.."
-    ]], columns=[
-        "title",
-        "budget",
-        "release_year",
-        "revenue",
-        "vote_average",
-        "production_companies",
-        "ratio",
-        "wikipedia_page_link",
-        "wikipedia_abstract"
-    ])
+    print("Processing files from disk..")
+    df_metadata = processing_csv.process_metadata(path_metadata=PATH_METADATA)
+    # mockup insertion of wikipedia data
+    df_metadata["wikipedia_abstract"] = None
+    df_metadata["wikipedia_page_link"] = None
 
     print("Loading data into the database..")
-    for i, row in df.iterrows():
+    for i, row in df_metadata.iterrows():
         cur.execute(sql_queries.films_table_insert, row.values)
     conn.commit()
 

@@ -134,6 +134,7 @@ def aggregate_data_sources(
     df_processed = pd.merge(df_metadata, df_ratio, on="id")
     # polish processed dataset
     columns_of_interest = [
+        "id",
         "title",
         "budget",
         "release_year",
@@ -145,10 +146,11 @@ def aggregate_data_sources(
     df_processed = df_processed[columns_of_interest]
     df_processed = df_processed[df_processed["ratio"] > 0]
     df_processed = df_processed.sort_values(by="ratio", ascending=False)
+    df_processed = df_processed.drop_duplicates(subset="id")
     return df_processed
 
 
-def process_metadata(path_metadata, number_of_elements):
+def process_metadata(path_metadata, number_of_elements=1000):
     """Process film metadata into a clean dataframe
 
     Args:

@@ -8,13 +8,14 @@ DROP TABLE IF EXISTS films
 """Create"""
 films_table_create = ("""
 CREATE TABLE IF NOT EXISTS films(
-    title varchar primary key,
+    id bigint primary key,
+    title varchar not null,
     budget bigint not null,
     release_year int not null,
     revenue bigint not null,
     vote_average float not null,
-    production_companies varchar not null,
     ratio float not null,
+    production_companies varchar not null,
     wikipedia_page_link varchar,
     wikipedia_abstract varchar 
 );
@@ -23,14 +24,15 @@ CREATE TABLE IF NOT EXISTS films(
 """Insert Pandas->SQL"""
 films_table_insert = """
 insert into films (
+    id,
     title,
     budget,
     release_year,
     revenue,
     vote_average,
-    production_companies,
     ratio,
+    production_companies,
     wikipedia_page_link,
     wikipedia_abstract
-) values (%s,%s,%s,%s,%s,%s,%s,%s,%s);
+) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
 """
