@@ -170,13 +170,13 @@ def select_document_candidates(documents, results_per_batch):
     return selected_documents
 
 
-def get_data_from_wikipedia(file, documents):
+def get_data_from_wikipedia(file, documents, total_lines):
     """Extract data from the wikipedia dataset"""
     results_per_batch = search_documents_heuristic(
         file,
         documents,
-        lines_per_batch=int(1e7),
-        total_lines=int(7 * 1e7)  # wikipedia file is fixed size
+        lines_per_batch=int(1e6),
+        total_lines=total_lines
     )
     select_documents = select_document_candidates(
         documents,

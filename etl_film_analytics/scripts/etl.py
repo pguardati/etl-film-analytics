@@ -3,23 +3,14 @@ import sys
 import argparse
 import psycopg2
 
-from etl_film_analytics.src.constants import (
-    DB_HOST,
-    DB_NAME,
-    DB_USER,
-    DB_PASSWORD,
-    DIR_DATA
-)
+from etl_film_analytics.src.constants import DB_URI, DIR_DATA
 from etl_film_analytics.src import sql_queries
 from etl_film_analytics.src import utils_tables, processing_csv, text_search
 
 
 def run(args):
     print("Connecting to the database..")
-    conn = psycopg2.connect(
-        f"host={DB_HOST} dbname={DB_NAME} "
-        f"user={DB_USER} password={DB_PASSWORD}"
-    )
+    conn = psycopg2.connect(args.database_uri)
     cur = conn.cursor()
 
     print("Processing film metadata..")
@@ -27,11 +18,12 @@ def run(args):
         path_metadata=args.metadata_filepath,
         number_of_elements=args.number_of_elements
     )
-    print("Enriching metadata with data from Wikipedia:")
+    print("Enriching metadata with film data from Wikipedia:")
     film_data = df_metadata.loc[:, ["title", "release_year"]].values
     wikipedia_links, wikipedia_abstracts = text_search.get_data_from_wikipedia(
         file=args.wikipedia_filepath,
-        documents=film_data
+        documents=film_data,
+        total_lines=args.number_of_wikipedia_lines
     )
     df_metadata["wikipedia_page_link"] = wikipedia_links
     df_metadata["wikipedia_abstract"] = wikipedia_abstracts
@@ -61,6 +53,16 @@ def parse_input(args):
         help="Number of elements to be loaded in the database",
         default=1000, type=int
     )
+    parser.add_argument(
+        "--number_of_wikipedia_lines",
+        help="Number of lines of the wikipedia file",
+        default=int(7 * 1e7), type=int
+    )
+    parser.add_argument(
+        "--database_uri",
+        help="URI fo a database",
+        default=DB_URI, type=str
+    )
     return parser.parse_args(args)
 
 
@@ -72,4 +74,4 @@ def main(args=None):
 
 
 if __name__ == "__main__":
-    main(["--number_of_elements=10"])
+    main(["--number_of_elements=1"])
