@@ -92,11 +92,11 @@ class TestSearchFunctions(unittest.TestCase):
                     'Heatwave (film)',
                     'https://en.wikipedia.org/wiki/Heatwave_(film)'
                 ],
-                [-1, None]
+                [-1, None, None]
             ],
             [
-                [-1, None],
-                [-1, None]
+                [-1, None, None],
+                [-1, None, None]
             ]
         ]
         matches = search_documents_heuristic(

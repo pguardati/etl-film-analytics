@@ -37,7 +37,7 @@ def search_document(text, document):
         (1, document_pattern % title)
     ]
     # retrieve the most important pattern only
-    result = [-1, None]
+    result = [-1, None, None]
     for score, pattern in patterns:
         match = re.search(pattern, text, re.MULTILINE)
         if match:
@@ -74,7 +74,7 @@ def search_documents_heuristic(
         lines_per_batch=int(1e4),
         total_lines=None
 ):
-    """Search a document in a file.
+    """Search a document in the wikipedia dataset.
     The search is done with an heuristic to improve space-time complexity:
     - Every batch is loaded into memory only once.
     - All the documents are searched in that batch.
@@ -102,7 +102,7 @@ def search_documents_heuristic(
             line_iterator = tqdm.tqdm(
                 line_iterator,
                 total=int(total_lines / lines_per_batch),
-                desc="explored chunks:"
+                desc="Querying wikipedia dataset"
             )
         for text_lines in line_iterator:
             text = "".join(text_lines)
@@ -116,7 +116,7 @@ def search_documents_naive(
         documents,
         lines_per_batch=int(1e4)
 ):
-    """Search document in a file.
+    """Search document in the wikipedia dataset.
     The search is done with a naive approach:
     - Split the file by batch and search a document for each batch
     - Repeat for each document
@@ -154,8 +154,7 @@ def select_document_candidates(documents, results_per_batch):
                                  (check `search_documents_heuristic`)
 
     Returns:
-        list: list of retrieved document information, with format:
-            [document0, document1, ...]
+        list: list of retrieved document information
     """
     # split candidates by document
     document_candidates = [[] for _ in range(len(documents))]
@@ -169,3 +168,21 @@ def select_document_candidates(documents, results_per_batch):
             candidates, key=lambda x: x[0], reverse=True)[0]
         selected_documents.append(selected_document)
     return selected_documents
+
+
+def get_data_from_wikipedia(file, documents):
+    """Extract data from the wikipedia dataset"""
+    results_per_batch = search_documents_heuristic(
+        file,
+        documents,
+        lines_per_batch=int(1e7),
+        total_lines=int(7 * 1e7)  # wikipedia file is fixed size
+    )
+    select_documents = select_document_candidates(
+        documents,
+        results_per_batch,
+    )
+    wikipedia_links = [document[2] for document in select_documents]
+    # TODO: this is a mockup of the abstract extraction
+    wikipedia_abstracts = [None for _ in range(len(wikipedia_links))]
+    return wikipedia_links, wikipedia_abstracts
