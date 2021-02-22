@@ -1,12 +1,12 @@
 import os
 import unittest
 
-from etl_film_analytics.src.constants import DIR_DATA
-from etl_film_analytics.src.text_search import \
+from etl_film_analytics.tests.constants import DIR_TEST_DATA
+from etl_film_analytics.src.search_by_line import \
     search_document, search_documents, \
     search_documents_heuristic, select_document_candidates
 
-file = os.path.join(DIR_DATA, "test_set_wikipedia.xml")
+file = os.path.join(DIR_TEST_DATA, "wikipedia_test_set.xml")
 text_lines = """
         <title>Wikipedia: Heat (1995 film)</title>
         <url>https://en.wikipedia.org/wiki/Heat_(1995_film)</url>
@@ -75,28 +75,14 @@ class TestSearchFunctions(unittest.TestCase):
         ]
         matches_expected = [
             [
-                [
-                    3,
-                    'Heat (1995 film)',
-                    'https://en.wikipedia.org/wiki/Heat_(1995_film)'
-                ],
-                [
-                    1,
-                    'Toy Story',
-                    'https://en.wikipedia.org/wiki/Toy_Story'
-                ]
-            ],
-            [
-                [
-                    2,
-                    'Heatwave (film)',
-                    'https://en.wikipedia.org/wiki/Heatwave_(film)'
-                ],
-                [-1, None, None]
-            ],
-            [
-                [-1, None, None],
-                [-1, None, None]
+                [3,
+                 'Heat (1995 film)',
+                 'https://en.wikipedia.org/wiki/Heat_(1995_film)'
+                 ],
+                [1,
+                 'Toy Story',
+                 'https://en.wikipedia.org/wiki/Toy_Story'
+                 ]
             ]
         ]
         matches = search_documents_heuristic(

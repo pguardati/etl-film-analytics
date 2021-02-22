@@ -5,7 +5,28 @@ import psycopg2
 
 from etl_film_analytics.src.constants import DB_URI, DIR_DATA
 from etl_film_analytics.src import sql_queries
-from etl_film_analytics.src import utils_tables, processing_csv, text_search
+from etl_film_analytics.src import utils_tables, \
+    processing_csv, search_by_line, search_by_hash
+
+
+def get_data_from_wikipedia(args, film_data):
+    """Get data from the wikipedia dataset
+    Different searching algorithms can be used:
+        - hash_table (initial waiting time, but extremely fast query)
+        - heuristic (no initial waiting, but slower query)
+    """
+    if args.search_algorithm == "hash_table":
+        return search_by_hash.get_data_from_wikipedia(
+            file=args.wikipedia_filepath,
+            documents=film_data,
+            table_filepath=args.table_filepath
+        )
+    else:
+        return search_by_line.get_data_from_wikipedia(
+            file=args.wikipedia_filepath,
+            documents=film_data,
+            total_lines=args.number_of_wikipedia_lines
+        )
 
 
 def run(args):
@@ -20,10 +41,9 @@ def run(args):
     )
     print("Enriching metadata with film data from Wikipedia:")
     film_data = df_metadata.loc[:, ["title", "release_year"]].values
-    wikipedia_links, wikipedia_abstracts = text_search.get_data_from_wikipedia(
-        file=args.wikipedia_filepath,
-        documents=film_data,
-        total_lines=args.number_of_wikipedia_lines
+    wikipedia_links, wikipedia_abstracts = get_data_from_wikipedia(
+        args,
+        film_data
     )
     df_metadata["wikipedia_page_link"] = wikipedia_links
     df_metadata["wikipedia_abstract"] = wikipedia_abstracts
@@ -62,6 +82,17 @@ def parse_input(args):
         "--database_uri",
         help="URI fo a database",
         default=DB_URI, type=str
+    )
+    parser.add_argument(
+        "--search_algorithm",
+        help="Type of algorithm to use to search results on wikipedia ",
+        default="hash_table", type=str
+    )
+    parser.add_argument(
+        "--table_filepath",
+        help="Path where to load the hash table of the wikipedia dataset",
+        default=os.path.join(
+            DIR_DATA, "enwiki-latest-abstract-hashtable.pickle")
     )
     return parser.parse_args(args)
 

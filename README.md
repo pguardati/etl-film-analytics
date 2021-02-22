@@ -42,6 +42,15 @@ To drop the current table and to create an empty one:
 python etl_film_analytics/scripts/create_tables.py
 ```
 
+The wikipedia file contains several lines.
+In order to search words inside it with reduced time complexity, an hash table has been used.
+To generate this hash table, run:
+```
+python etl_film_analytics/scripts/create_hash_table.py \
+--text_filepath=data/enwiki-latest-abstract.xml \
+--table_filepath=data/enwiki-latest-abstract-hashtable.pickle
+```
+
 To run the etl pipeline on the full data,  
 ```
 python etl_film_analytics/scripts/etl.py --metadata_filepath=... --wikipedia_filepath=...
@@ -51,7 +60,7 @@ e.g:
 python etl_film_analytics/scripts/etl.py \
 --metadata_filepath=data/movies_metadata.csv \
 --wikipedia_filepath=data/enwiki-latest-abstract.xml \
---number_of_elements=10
+--number_of_elements=1000
 ```
 
 ## Tests
@@ -63,4 +72,3 @@ To run all unittests:
 ```
 python -m unittest discover etl_film_analytics/tests
 ```
-

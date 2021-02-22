@@ -72,7 +72,8 @@ def search_documents_heuristic(
         file,
         documents,
         lines_per_batch=int(1e4),
-        total_lines=None
+        total_lines=None,
+        **kwargs
 ):
     """Search a document in the wikipedia dataset.
     The search is done with an heuristic to improve space-time complexity:
@@ -114,7 +115,8 @@ def search_documents_heuristic(
 def search_documents_naive(
         file,
         documents,
-        lines_per_batch=int(1e4)
+        lines_per_batch=int(1e4),
+        **kwargs
 ):
     """Search document in the wikipedia dataset.
     The search is done with a naive approach:
