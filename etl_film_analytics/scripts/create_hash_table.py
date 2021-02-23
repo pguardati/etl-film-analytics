@@ -10,12 +10,12 @@ from etl_film_analytics.src.search_by_hash import create_hash_table
 
 def run(args):
     print("Creating an Hash table..\n"
-          "This can require several minutes..")
+          "This could take several minutes..")
     start = time.time()
     text_file = open(args.text_filepath, 'r')
     table = create_hash_table(text_file)
     text_file.close()
-    print("Elapsed time:", time.time() - start)
+    print(f"Elapsed time: {time.time() - start:.2} s")
     print("Storing the Hash table on disk..")
     table_file = open(args.table_filepath, 'wb')
     pickle.dump(table, table_file, protocol=pickle.HIGHEST_PROTOCOL)

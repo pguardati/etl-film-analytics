@@ -29,6 +29,16 @@ https://www.kaggle.com/rounakbanik/the-movies-dataset/version/7#movies_metadata.
 ```
 and store them in `etl-film-analytics/data`
 
+## Tests
+Create a test database:
+```
+sh etl_film_analytics/scripts/create_database.sh analytics_db_test
+```
+Run unittests:
+```
+python -m unittest discover etl_film_analytics/tests
+```
+
 ## Usage
 Create a database to store the result of the etl
 ```
@@ -48,7 +58,15 @@ python etl_film_analytics/scripts/create_hash_table.py \
 --text_filepath=data/enwiki-latest-abstract.xml \
 --table_filepath=data/enwiki-latest-abstract-hashtable.pickle
 ```
-Note: this action requires 10' on a Macbook Pro 2015
+Note: this action requires ~10' on a Macbook Pro 2015
+output:
+```
+Creating an Hash table..
+This could take several minutes..
+Elapsed time: 687.85 s
+Storing the Hash table on disk..
+Hash table stored in data/enwiki-latest-abstract-hashtable.pickle
+```
 
 Once the hash table has been generated,
 run the etl pipeline on the full data,  
@@ -88,15 +106,6 @@ films
 |  3 | 38140 | To Rob a Thief          |  4002313 |           2007 |         6 |            6   | 667052           | Narrow Bridge Films                                                                     | https://en.wikipedia.org/wiki/To_Rob_a_Thief          | | runtime        = 98 minutes                |
 |  4 | 33927 | Deadfall                | 10000000 |           1993 |        18 |            3.1 | 555556           | Trimark Pictures                                                                        | https://en.wikipedia.org/wiki/Deadfall_(1993_film)    | | music          = Jim Fox                   |
 +----+-------+-------------------------+----------+----------------+-----------+----------------+------------------+-----------------------------------------------------------------------------------------+-------------------------------------------------------+----------------------------------------------+
-Elapsed time: 1.05e+02 s
+Elapsed time: 97.9 s
 ```
 
-## Tests
-Create a test database:
-```
-sh etl_film_analytics/scripts/create_database.sh analytics_db_test
-```
-Run unittests:
-```
-python -m unittest discover etl_film_analytics/tests
-```
