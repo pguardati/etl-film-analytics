@@ -23,12 +23,12 @@ class TestHashSearch(unittest.TestCase):
     def test_read_document(self):
         query = "<title>Wikipedia: Heat (1995 film)</title>"
         document_position = self.table[query]
-        title, url = read_document(self.file, document_position)
+        title, url, abstract = read_document(self.file, document_position)
         self.assertEqual('https://en.wikipedia.org/wiki/Heat_(1995_film)', url)
 
     def test_search_document(self):
         document = ("Heat", 1995)
-        title, url = get_document_features(self.file, document, self.table)
+        title, url, abstract = get_document_features(self.file, document, self.table)
         self.assertEqual('Heat (1995 film)', title)
 
     def test_search_documents(self):

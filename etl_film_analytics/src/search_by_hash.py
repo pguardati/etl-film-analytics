@@ -30,6 +30,27 @@ def create_hash_table(file):
     return hash_table
 
 
+def read_document_abstract(file):
+    """Read abstract field of a wikipedia document
+    Note: the cursor of the file has to point the beginning
+    of the abstract field
+    """
+    lines = []
+    while True:
+        line = file.readline().strip()
+        # the cursor points to the abstract field, start reading
+        if "<abstract>" in line:
+            lines.append(line)
+            if "</abstract>" in line:
+                abstract_text = " ".join(lines)
+                match = re.search("<abstract>(.*)</abstract>", abstract_text)
+                abstract = match.group(1)
+                return abstract
+        else:
+            # the cursor was not pointing to the abstract field
+            return None
+
+
 def read_document(file, document_position):
     """Read a document and extract its features
 
@@ -47,13 +68,14 @@ def read_document(file, document_position):
     # read raw title and url
     title_line = file.readline()
     url_line = file.readline()
+    abstract = read_document_abstract(file)
     # extract title and url
     title = re.search("<title>Wikipedia: (.*)</title>", title_line)
     url = re.search("<url>(.*)</url>", url_line)
     # get processed data
     title = title.group(1) if title else None
     url = url.group(1) if url else None
-    return title, url
+    return title, url, abstract
 
 
 def get_document_features(file, document, table):
@@ -85,7 +107,7 @@ def get_document_features(file, document, table):
         document_pattern % title
     ]
     # check if the table contains one of the generated lines
-    document = [None, None]
+    document = [None, None, None]
     for query in queries:
         if query in table:
             # return features of the first matched document (most probable one)
@@ -139,6 +161,5 @@ def get_data_from_wikipedia(
         table,
     )
     wikipedia_links = [document[1] for document in documents_features]
-    # TODO: this is a mockup of the abstract extraction
-    wikipedia_abstracts = [None for _ in range(len(wikipedia_links))]
+    wikipedia_abstracts = [document[2] for document in documents_features]
     return wikipedia_links, wikipedia_abstracts
