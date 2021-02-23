@@ -6,28 +6,8 @@ import psycopg2
 
 from etl_film_analytics.src.constants import DB_URI, DIR_DATA
 from etl_film_analytics.src import sql_queries
-from etl_film_analytics.src import utils_tables, \
-    processing_csv, search_by_line, search_by_hash
-
-
-def get_data_from_wikipedia(args, film_data):
-    """Get data from the wikipedia dataset
-    Different searching algorithms can be used:
-        - hash_table (initial waiting time, but extremely fast query)
-        - heuristic (no initial waiting, but slower query)
-    """
-    if args.search_algorithm == "hash_table":
-        return search_by_hash.get_data_from_wikipedia(
-            file=args.wikipedia_filepath,
-            documents=film_data,
-            table_filepath=args.table_filepath
-        )
-    else:
-        return search_by_line.get_data_from_wikipedia(
-            file=args.wikipedia_filepath,
-            documents=film_data,
-            total_lines=args.number_of_wikipedia_lines
-        )
+from etl_film_analytics.src import utils_tables, processing_csv
+from etl_film_analytics.src.search_by_hash import get_data_from_wikipedia
 
 
 def run(args):
@@ -45,8 +25,9 @@ def run(args):
     print("Merging metadata with film data from Wikipedia:")
     film_data = df_metadata.loc[:, ["title", "release_year"]].values
     wikipedia_links, wikipedia_abstracts = get_data_from_wikipedia(
-        args,
-        film_data
+        file=args.wikipedia_filepath,
+        documents=film_data,
+        table_filepath=args.table_filepath
     )
     df_metadata["wikipedia_page_link"] = wikipedia_links
     df_metadata["wikipedia_abstract"] = wikipedia_abstracts
@@ -84,19 +65,9 @@ def parse_input(args):
         default=1000, type=int
     )
     parser.add_argument(
-        "--number_of_wikipedia_lines",
-        help="Number of lines of the wikipedia file",
-        default=int(7 * 1e7), type=int
-    )
-    parser.add_argument(
         "--database_uri",
         help="URI fo a database",
         default=DB_URI, type=str
-    )
-    parser.add_argument(
-        "--search_algorithm",
-        help="Type of algorithm to use to search results on wikipedia ",
-        default="hash_table", type=str
     )
     parser.add_argument(
         "--table_filepath",

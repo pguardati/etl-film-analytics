@@ -3,7 +3,7 @@ import pickle
 import os
 
 from etl_film_analytics.tests.constants import DIR_TEST_DATA
-from etl_film_analytics.src.search_by_hash import create_hash_table, read_document, \
+from etl_film_analytics.src.search_by_hash import read_document, \
     get_document_features, get_documents_features
 
 
