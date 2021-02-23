@@ -1,6 +1,24 @@
 # etl-film-analytics
 ETL pipeline that aggregates film data and load them into a PostgreSQL database.  
 
+## Design
+This pipeline aggregates 2 source of data:
+- film metadata (title, year, ..)
+- data from wikipedia (subset of wikipedia source, in xml format)
+ 
+The **film metadata** contains 45k films.  
+To process it, a **line by line** algorithm has shown sufficient time performance.  
+Hence, no additional solution has been investigated.
+
+The **data from wikipedia** contains ~70M lines
+and the requirement is to query this file for each of the 45k films.  
+A naive approach (divide the file in batches and search the films in each batch) has shown insufficient performance.  
+Hence, a solution based on an **hash table** has been used.  
+In particular the hash table is created once, scrolling the wikipedia dataset line by line.
+Then, at query time, the films are queried in linear time 
+since the location of each line has been previously recorded in the hash table.
+
+
 ## Installation
 
 Before to start:  
@@ -58,7 +76,7 @@ python etl_film_analytics/scripts/create_hash_table.py \
 --text_filepath=data/enwiki-latest-abstract.xml \
 --table_filepath=data/enwiki-latest-abstract-hashtable.pickle
 ```
-Note: this action requires ~10' on a Macbook Pro 2015
+Note: this action requires ~10' on a Macbook Pro 2015  
 output:
 ```
 Creating an Hash table..
