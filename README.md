@@ -16,13 +16,11 @@ PYTHONPATH=~/PycharmProjects/etl-film-analytics:$PYTHONPATH
 export PYTHONPATH
 ```
 
-To install and activate the environment:
+Install and activate the environment:
 ```
 conda env create -f environment.yml
 conda activate etl_film_analytics
 ```
-
-
 
 Download data from:
 ```
@@ -37,29 +35,35 @@ Create a database to store the result of the etl
 sh etl_film_analytics/scripts/create_database.sh analytics_db
 ```
 
-To drop the current table and to create an empty one:
+Create an empty table in the database:
 ```
 python etl_film_analytics/scripts/create_tables.py
 ```
 
-The wikipedia file contains several lines.
-In order to search words inside it with reduced time complexity, an hash table has been used.
+The wikipedia file contains several lines (~7Gb).  
+In order to search multiple words efficiently, an hash table has been used.
 To generate this hash table, run:
 ```
 python etl_film_analytics/scripts/create_hash_table.py \
 --text_filepath=data/enwiki-latest-abstract.xml \
 --table_filepath=data/enwiki-latest-abstract-hashtable.pickle
 ```
+Note: this action requires 10' on a Macbook Pro 2015
 
-To run the etl pipeline on the full data,  
+Once the hash table has been generated,
+run the etl pipeline on the full data,  
 ```
-python etl_film_analytics/scripts/etl.py --metadata_filepath=... --wikipedia_filepath=...
+python etl_film_analytics/scripts/etl.py 
+--metadata_filepath=.. \
+--wikipedia_filepath=.. \
+--table_filepath=..
 ```
 e.g:
 ```
 python etl_film_analytics/scripts/etl.py \
 --metadata_filepath=data/movies_metadata.csv \
 --wikipedia_filepath=data/enwiki-latest-abstract.xml \
+--table_filepath=data/enwiki-latest-abstract-hashtable.pickle \
 --number_of_elements=1000
 ```
 output:
@@ -92,7 +96,7 @@ Create a test database:
 ```
 sh etl_film_analytics/scripts/create_database.sh analytics_db_test
 ```
-To run all unittests:
+Run unittests:
 ```
 python -m unittest discover etl_film_analytics/tests
 ```

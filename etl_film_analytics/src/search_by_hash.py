@@ -3,9 +3,9 @@ import pickle
 
 
 def create_hash_table(file):
-    """Create a hash table.
+    """Create an hash table.
     The table has the following format:
-        - key: stripped version of a line
+        - key: document line without trailing spaces
         - value: position of that line in the file
     e.g:
         '<title>Wikipedia: Heat</title>': 12340
@@ -31,9 +31,9 @@ def create_hash_table(file):
 
 
 def read_document_abstract(file):
-    """Read abstract field of a wikipedia document
+    """Read the abstract field of a wikipedia document
     Note: the cursor of the file has to point the beginning
-    of the abstract field
+        of the abstract field
     """
     lines = []
     while True:
@@ -61,7 +61,7 @@ def read_document(file, document_position):
                                 the beginning of the file
 
     Returns:
-        tuple=[str,str]
+        tuple=[str,str,str]
     """
     # reach document position
     file.seek(document_position)
@@ -93,6 +93,8 @@ def get_document_features(file, document, table):
         document(tuple): tuple of document keywords with format (title,year)
         table(dict): hash table of the input file
 
+    Returns:
+        tuple=[str,str,str]
     """
     title, year = document
     # generate title lines, sorted by importance

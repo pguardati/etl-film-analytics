@@ -36,7 +36,7 @@ def compute_ratio(path_metadata):
 
 
 def get_metadata(path_metadata, list_of_ids):
-    """Retrieve metadata of films that belong to a list of film identifiers.
+    """Retrieve metadata that belong to a list of films.
 
     Args:
         path_metadata(str): path of the film metadata, as a csv file
@@ -82,7 +82,7 @@ def aggregate_data_sources(
         film_metadata,
         budget_to_revenue_ratio
 ):
-    """Aggregate data from multiple sources into a clean dataframe
+    """Aggregate data from multiple sources
 
     Args:
         film_metadata(list): metadata from films, as a list of list
@@ -150,7 +150,7 @@ def aggregate_data_sources(
 
 
 def process_metadata(path_metadata, number_of_elements=None):
-    """Process film metadata into a clean dataframe
+    """Process film metadata
 
     Args:
         path_metadata(str): path of film metadata, as a csv file
