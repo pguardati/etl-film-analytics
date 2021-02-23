@@ -144,13 +144,12 @@ def aggregate_data_sources(
         "production_companies"
     ]
     df_processed = df_processed[columns_of_interest]
-    df_processed = df_processed[df_processed["ratio"] > 0]
     df_processed = df_processed.sort_values(by="ratio", ascending=False)
     df_processed = df_processed.drop_duplicates(subset="id")
     return df_processed
 
 
-def process_metadata(path_metadata, number_of_elements=1000):
+def process_metadata(path_metadata, number_of_elements=None):
     """Process film metadata into a clean dataframe
 
     Args:
@@ -165,6 +164,7 @@ def process_metadata(path_metadata, number_of_elements=1000):
     budget_to_revenue_ratio = compute_ratio(path_metadata)
 
     # retrieve elements with highest ratio
+    number_of_elements = number_of_elements or len(budget_to_revenue_ratio)
     budget_to_revenue_ratio = budget_to_revenue_ratio[:number_of_elements]
     top_ratio_ids = [tuple[0] for tuple in budget_to_revenue_ratio]
     film_metadata = get_metadata(path_metadata, list_of_ids=top_ratio_ids)

@@ -62,6 +62,30 @@ python etl_film_analytics/scripts/etl.py \
 --wikipedia_filepath=data/enwiki-latest-abstract.xml \
 --number_of_elements=1000
 ```
+output:
+```
+Connecting to postgresql://postgres@localhost/analytics_db..
+Processing film metadata..
+Processed 45430 films
+Merging metadata with film data from Wikipedia:
+Loading hash table from /Users/pietroguardati/PycharmProjects/etl-film-analytics/data/enwiki-latest-abstract-hashtable.pickle..
+Querying features for 45430 films from wikipedia..
+Merging completed
+Selecting films to load..
+Loading 1000 data into the database..
+Displaying the destination table:
+films
++----+-------+-------------------------+----------+----------------+-----------+----------------+------------------+-----------------------------------------------------------------------------------------+-------------------------------------------------------+----------------------------------------------+
+|    |    id | title                   |   budget |   release_year |   revenue |   vote_average |            ratio | production_companies                                                                    | wikipedia_page_link                                   | wikipedia_abstract                           |
+|----+-------+-------------------------+----------+----------------+-----------+----------------+------------------+-----------------------------------------------------------------------------------------+-------------------------------------------------------+----------------------------------------------|
+|  0 | 14844 | Chasing Liberty         | 23000000 |           2004 |        12 |            6.1 |      1.91667e+06 | Alcon Entertainment,ETIC Films,C.R.G. International,Trademark Films,Micro Fusion 2003-2 | https://en.wikipedia.org/wiki/Chasing_Liberty         | | producer       =                           |
+|  1 | 18475 | The Cookout             | 16000000 |           2004 |        12 |            4.6 |      1.33333e+06 | Cookout Productions                                                                     | https://en.wikipedia.org/wiki/The_Cookout             | | runtime        = 97 minutes                |
+|  2 | 48781 | Never Talk to Strangers |  6400000 |           1995 |         6 |            4.7 |      1.06667e+06 | TriStar Pictures                                                                        | https://en.wikipedia.org/wiki/Never_Talk_to_Strangers | | music          = Pino DonaggioSteve Sexton |
+|  3 | 38140 | To Rob a Thief          |  4002313 |           2007 |         6 |            6   | 667052           | Narrow Bridge Films                                                                     | https://en.wikipedia.org/wiki/To_Rob_a_Thief          | | runtime        = 98 minutes                |
+|  4 | 33927 | Deadfall                | 10000000 |           1993 |        18 |            3.1 | 555556           | Trimark Pictures                                                                        | https://en.wikipedia.org/wiki/Deadfall_(1993_film)    | | music          = Jim Fox                   |
++----+-------+-------------------------+----------+----------------+-----------+----------------+------------------+-----------------------------------------------------------------------------------------+-------------------------------------------------------+----------------------------------------------+
+Elapsed time: 1.05e+02 s
+```
 
 ## Tests
 Create a test database:

@@ -132,7 +132,7 @@ def get_data_from_wikipedia(
     print(f"Loading hash table from {table_filepath}..")
     with open(table_filepath, 'rb') as table_file:
         table = pickle.load(table_file)
-    print("Querying film features from wikipedia..")
+    print(f"Querying features for {len(documents)} films from wikipedia..")
     documents_features = search_documents_by_hash(
         file,
         documents,

@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import argparse
 import psycopg2
 
@@ -30,16 +31,18 @@ def get_data_from_wikipedia(args, film_data):
 
 
 def run(args):
-    print("Connecting to the database..")
+    start = time.time()
+    print(f"Connecting to {args.database_uri}..")
     conn = psycopg2.connect(args.database_uri)
     cur = conn.cursor()
 
     print("Processing film metadata..")
     df_metadata = processing_csv.process_metadata(
         path_metadata=args.metadata_filepath,
-        number_of_elements=args.number_of_elements
     )
-    print("Enriching metadata with film data from Wikipedia:")
+    print(f"Processed {len(df_metadata)} films")
+
+    print("Merging metadata with film data from Wikipedia:")
     film_data = df_metadata.loc[:, ["title", "release_year"]].values
     wikipedia_links, wikipedia_abstracts = get_data_from_wikipedia(
         args,
@@ -47,14 +50,21 @@ def run(args):
     )
     df_metadata["wikipedia_page_link"] = wikipedia_links
     df_metadata["wikipedia_abstract"] = wikipedia_abstracts
+    print("Merging completed")
 
-    print("Loading data into the database..")
+    print("Selecting films to load..")
+    number_of_elements = args.number_of_elements or len(df_metadata)
+    df_metadata = df_metadata.iloc[:number_of_elements, :]
+
+    print(f"Loading {len(df_metadata)} data into the database..")
     for i, row in df_metadata.iterrows():
         cur.execute(sql_queries.films_table_insert, row.values)
     conn.commit()
 
     print("Displaying the destination table:")
     utils_tables.check_database_content(["films"], conn)
+
+    print(f"Elapsed time: {time.time() - start:.3} s")
 
 
 def parse_input(args):
